@@ -1,0 +1,13 @@
+{
+  "name": "tested-examples-node",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "tsc && node --test tests/examples.test.ts"
+  },
+  "devDependencies": {
+    "@ascribed/cli": "0.3.1-next.21",
+    "@types/node": "^24.0.0",
+    "typescript": "5.9.3"
+  }
+}

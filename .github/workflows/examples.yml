@@ -1,0 +1,50 @@
+# Tests the examples under each Node the observations name, checks that every
+# observation still matches the examples, and builds the docs. It writes no
+# observation: run `ascribe observe` yourself and commit the result.
+name: Examples
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Weekly, so a new Node or a change in a dependency that breaks an example is
+  # found here, and GitHub tells the repository's owner.
+  schedule:
+    - cron: "23 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (Node ${{ matrix.node }})
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm test
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci
+      # Fails when an example changed after its last test run: run
+      # `ascribe observe --name <name>` under that Node, and commit.
+      - name: Check the observations
+        run: |
+          npx ascribe observe --check --name node-22
+          npx ascribe observe --check --name node-24
+      - run: npx ascribe check --deny-warnings --config docs
+      - run: npx ascribe build --config docs
