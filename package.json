@@ -6,7 +6,7 @@
     "test": "tsc && node --test tests/examples.test.ts"
   },
   "devDependencies": {
-    "@ascribed/cli": "0.3.1-next.21",
+    "@ascribed/cli": "0.3.1",
     "@types/node": "^24.0.0",
     "typescript": "5.9.3"
   }
